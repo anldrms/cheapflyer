@@ -1,29 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Find the best travel and flight deals. Discover amazing discounts on flights, hotels, and vacation packages.">
-    <title>TravelDeals - Find Amazing Flight & Vacation Discounts</title>
+    <meta name="description"
+        content="CheapFlyer - Find the best flight and travel deals personalized to your location.">
+    <title>CheapFlyer - Smart Flight & Travel Deals</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
+    <!-- Location Permission Modal -->
+    <div class="modal-overlay" id="location-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Enable Location</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                    </svg>
+                </div>
+                <p>Allow CheapFlyer to access your location to show personalized flight deals from your nearest airport.
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="location-deny">Not Now</button>
+                <button class="btn btn-accent" id="location-allow">Allow Location</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
-            <a href="#" class="logo">
-                <span class="logo-icon">✈️</span>
-                <span class="logo-text">TravelDeals</span>
+            <a href="index.html" class="logo">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <path d="M28 12L18 4L8 12V28H28V12Z" fill="#00d4aa" opacity="0.2" />
+                    <path d="M4 16L16 6L28 16" stroke="#00d4aa" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M8 14V28H24V14" stroke="#00d4aa" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M20 8L26 2M26 2L32 8M26 2V14" stroke="#00d4aa" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" transform="translate(-6, 2) scale(0.7)" />
+                </svg>
+                <span class="logo-text">Cheap<span style="color: var(--accent)">Flyer</span></span>
             </a>
             <ul class="nav-links">
                 <li><a href="#flights">Flights</a></li>
                 <li><a href="#vacations">Vacations</a></li>
-                <li><a href="#deals">Hot Deals</a></li>
-                <li><a href="#newsletter">Newsletter</a></li>
+                <li><a href="#deals">Deals</a></li>
+                <li><a href="help.html">Help</a></li>
             </ul>
+            <div class="nav-actions">
+                <button class="btn btn-ghost" id="signin-btn">Sign In</button>
+                <button class="btn btn-accent btn-sm">Get Started</button>
+            </div>
             <button class="nav-toggle" aria-label="Toggle navigation">
                 <span></span>
                 <span></span>
@@ -32,24 +72,40 @@
         </div>
     </nav>
 
+    <!-- Location Banner -->
+    <div class="location-banner" id="location-banner">
+        <div class="container">
+            <div class="location-info">
+                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                </svg>
+                <span>Showing deals from <span class="airport-code" id="user-airport">---</span></span>
+                <span id="user-city"></span>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="change-location">Change</button>
+        </div>
+    </div>
+
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-bg">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-        </div>
+        <div class="hero-bg"></div>
         <div class="container">
             <div class="hero-content">
-                <h1>Discover <span class="gradient-text">Unbeatable</span> Travel Deals</h1>
-                <p>Save up to 70% on flights, hotels, and vacation packages. Your dream destination is just a click away.</p>
-                
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    <span>Live deals updating now</span>
+                </div>
+                <h1>Find <span class="highlight">Unbeatable</span> Flight Deals</h1>
+                <p>Save up to 70% on flights and vacation packages. Personalized deals based on your location.</p>
+
                 <!-- Search Form -->
                 <div class="search-card">
                     <div class="search-tabs">
-                        <button class="tab-btn active" data-tab="flights">✈️ Flights</button>
-                        <button class="tab-btn" data-tab="hotels">🏨 Hotels</button>
-                        <button class="tab-btn" data-tab="packages">📦 Packages</button>
+                        <button class="tab-btn active" data-tab="flights">Flights</button>
+                        <button class="tab-btn" data-tab="hotels">Hotels</button>
+                        <button class="tab-btn" data-tab="packages">Packages</button>
                     </div>
                     <form class="search-form" id="search-form">
                         <div class="form-group">
@@ -58,7 +114,7 @@
                         </div>
                         <div class="form-group">
                             <label for="to">To</label>
-                            <input type="text" id="to" placeholder="City or Airport" required>
+                            <input type="text" id="to" placeholder="Where to?" required>
                         </div>
                         <div class="form-group">
                             <label for="depart">Depart</label>
@@ -68,8 +124,32 @@
                             <label for="return">Return</label>
                             <input type="date" id="return">
                         </div>
-                        <button type="submit" class="btn btn-primary">Search Deals</button>
+                        <button type="submit" class="btn btn-accent btn-lg">Search</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>500+</h3>
+                    <p>Airlines Covered</p>
+                </div>
+                <div class="stat-item">
+                    <h3>10K+</h3>
+                    <p>Destinations</p>
+                </div>
+                <div class="stat-item">
+                    <h3>2M+</h3>
+                    <p>Happy Travelers</p>
+                </div>
+                <div class="stat-item">
+                    <h3>70%</h3>
+                    <p>Average Savings</p>
                 </div>
             </div>
         </div>
@@ -79,93 +159,14 @@
     <section class="deals-section" id="flights">
         <div class="container">
             <div class="section-header">
-                <h2>🔥 Hot Flight Deals</h2>
-                <p>Limited time offers on popular destinations</p>
+                <div class="top-row">
+                    <h2>Hot Flight Deals</h2>
+                    <a href="deals.html" class="view-all">View all deals →</a>
+                </div>
+                <p>Limited time offers from <span id="deals-origin">your area</span></p>
             </div>
-            <div class="deals-grid">
-                <!-- Deal Card 1 -->
-                <div class="deal-card">
-                    <div class="deal-image">
-                        <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400&h=250&fit=crop" alt="Paris">
-                        <span class="discount-badge">-45%</span>
-                    </div>
-                    <div class="deal-content">
-                        <div class="deal-route">
-                            <span>New York</span>
-                            <span class="route-arrow">→</span>
-                            <span>Paris</span>
-                        </div>
-                        <div class="deal-dates">Dec 15 - Dec 22, 2024</div>
-                        <div class="deal-price">
-                            <span class="old-price">$899</span>
-                            <span class="new-price">$495</span>
-                        </div>
-                        <button class="btn btn-secondary">Book Now</button>
-                    </div>
-                </div>
-
-                <!-- Deal Card 2 -->
-                <div class="deal-card">
-                    <div class="deal-image">
-                        <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&h=250&fit=crop" alt="Tokyo">
-                        <span class="discount-badge">-35%</span>
-                    </div>
-                    <div class="deal-content">
-                        <div class="deal-route">
-                            <span>Los Angeles</span>
-                            <span class="route-arrow">→</span>
-                            <span>Tokyo</span>
-                        </div>
-                        <div class="deal-dates">Jan 10 - Jan 20, 2025</div>
-                        <div class="deal-price">
-                            <span class="old-price">$1,299</span>
-                            <span class="new-price">$845</span>
-                        </div>
-                        <button class="btn btn-secondary">Book Now</button>
-                    </div>
-                </div>
-
-                <!-- Deal Card 3 -->
-                <div class="deal-card">
-                    <div class="deal-image">
-                        <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=250&fit=crop" alt="Rome">
-                        <span class="discount-badge">-50%</span>
-                    </div>
-                    <div class="deal-content">
-                        <div class="deal-route">
-                            <span>Chicago</span>
-                            <span class="route-arrow">→</span>
-                            <span>Rome</span>
-                        </div>
-                        <div class="deal-dates">Feb 5 - Feb 12, 2025</div>
-                        <div class="deal-price">
-                            <span class="old-price">$1,100</span>
-                            <span class="new-price">$550</span>
-                        </div>
-                        <button class="btn btn-secondary">Book Now</button>
-                    </div>
-                </div>
-
-                <!-- Deal Card 4 -->
-                <div class="deal-card">
-                    <div class="deal-image">
-                        <img src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=400&h=250&fit=crop" alt="Bali">
-                        <span class="discount-badge">-40%</span>
-                    </div>
-                    <div class="deal-content">
-                        <div class="deal-route">
-                            <span>San Francisco</span>
-                            <span class="route-arrow">→</span>
-                            <span>Bali</span>
-                        </div>
-                        <div class="deal-dates">Mar 1 - Mar 10, 2025</div>
-                        <div class="deal-price">
-                            <span class="old-price">$1,450</span>
-                            <span class="new-price">$870</span>
-                        </div>
-                        <button class="btn btn-secondary">Book Now</button>
-                    </div>
-                </div>
+            <div class="deals-grid" id="flight-deals">
+                <!-- Deal cards will be dynamically inserted here -->
             </div>
         </div>
     </section>
@@ -174,79 +175,14 @@
     <section class="packages-section" id="vacations">
         <div class="container">
             <div class="section-header">
-                <h2>🌴 Vacation Packages</h2>
+                <div class="top-row">
+                    <h2>Vacation Packages</h2>
+                    <a href="packages.html" class="view-all">View all packages →</a>
+                </div>
                 <p>All-inclusive deals for your perfect getaway</p>
             </div>
-            <div class="packages-grid">
-                <!-- Package 1 -->
-                <div class="package-card featured">
-                    <div class="package-image">
-                        <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&h=400&fit=crop" alt="Maldives">
-                        <div class="package-overlay">
-                            <span class="package-tag">Best Seller</span>
-                        </div>
-                    </div>
-                    <div class="package-content">
-                        <h3>Maldives Paradise</h3>
-                        <p>7 nights at 5-star resort with flights</p>
-                        <ul class="package-features">
-                            <li>✓ Round-trip flights</li>
-                            <li>✓ Beachfront villa</li>
-                            <li>✓ All meals included</li>
-                            <li>✓ Spa treatment</li>
-                        </ul>
-                        <div class="package-price">
-                            <span class="from-text">From</span>
-                            <span class="price">$2,499</span>
-                            <span class="per-person">per person</span>
-                        </div>
-                        <button class="btn btn-primary">View Package</button>
-                    </div>
-                </div>
-
-                <!-- Package 2 -->
-                <div class="package-card">
-                    <div class="package-image">
-                        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=400&fit=crop" alt="Dubai">
-                    </div>
-                    <div class="package-content">
-                        <h3>Dubai Luxury Escape</h3>
-                        <p>5 nights luxury experience</p>
-                        <ul class="package-features">
-                            <li>✓ Round-trip flights</li>
-                            <li>✓ 5-star hotel</li>
-                            <li>✓ Desert safari</li>
-                        </ul>
-                        <div class="package-price">
-                            <span class="from-text">From</span>
-                            <span class="price">$1,899</span>
-                            <span class="per-person">per person</span>
-                        </div>
-                        <button class="btn btn-primary">View Package</button>
-                    </div>
-                </div>
-
-                <!-- Package 3 -->
-                <div class="package-card">
-                    <div class="package-image">
-                        <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&h=400&fit=crop" alt="Swiss Alps">
-                    </div>
-                    <div class="package-content">
-                        <h3>Swiss Alps Adventure</h3>
-                        <p>6 nights mountain experience</p>
-                        <ul class="package-features">
-                            <li>✓ Round-trip flights</li>
-                            <li>✓ Chalet accommodation</li>
-                            <li>✓ Ski pass included</li>
-                        </ul>
-                        <div class="package-price">
-                            <span class="from-text">From</span>
-                            <span class="price">$2,199</span>
-                            <span class="per-person">per person</span>
-                        </div>
-                        <button class="btn btn-primary">View Package</button>
-                    </div>
-                </div>
+            <div class="packages-grid" id="vacation-packages">
+                <!-- Package cards will be dynamically inserted here -->
             </div>
         </div>
     </section>
@@ -255,28 +191,52 @@
     <section class="features-section" id="deals">
         <div class="container">
             <div class="section-header">
-                <h2>Why Choose TravelDeals?</h2>
+                <h2>Why CheapFlyer?</h2>
                 <p>We make finding the best deals effortless</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">💰</div>
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                    </div>
                     <h3>Best Price Guarantee</h3>
                     <p>We scan hundreds of travel sites to find you the lowest prices available.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🔔</div>
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                        </svg>
+                    </div>
                     <h3>Price Drop Alerts</h3>
                     <p>Get notified instantly when prices drop on your favorite destinations.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                    </div>
                     <h3>Secure Booking</h3>
                     <p>Book with confidence with our secure payment and refund protection.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🌍</div>
-                    <h3>Global Destinations</h3>
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="2" y1="12" x2="22" y2="12" />
+                            <path
+                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                        </svg>
+                    </div>
+                    <h3>Global Coverage</h3>
                     <p>Access deals to over 10,000 destinations worldwide.</p>
                 </div>
             </div>
@@ -289,17 +249,14 @@
             <div class="newsletter-card">
                 <div class="newsletter-content">
                     <h2>Get Exclusive Deals</h2>
-                    <p>Subscribe to our newsletter and receive the hottest travel deals directly in your inbox.</p>
+                    <p>Subscribe and receive the hottest travel deals directly in your inbox. Be the first to know.</p>
                     <form class="newsletter-form" id="newsletter-form">
                         <div class="input-group">
-                            <input type="email" placeholder="Enter your email address" required>
-                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                            <input type="email" placeholder="Enter your email" required>
+                            <button type="submit" class="btn btn-accent">Subscribe</button>
                         </div>
-                        <p class="form-note">🔒 We respect your privacy. Unsubscribe anytime.</p>
+                        <p class="form-note">We respect your privacy. Unsubscribe anytime.</p>
                     </form>
-                </div>
-                <div class="newsletter-graphic">
-                    <div class="plane-animation">✈️</div>
                 </div>
             </div>
         </div>
@@ -310,56 +267,96 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <a href="#" class="logo">
-                        <span class="logo-icon">✈️</span>
-                        <span class="logo-text">TravelDeals</span>
+                    <a href="index.html" class="logo">
+                        <svg class="logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none">
+                            <path d="M28 12L18 4L8 12V28H28V12Z" fill="#00d4aa" opacity="0.2" />
+                            <path d="M4 16L16 6L28 16" stroke="#00d4aa" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M8 14V28H24V14" stroke="#00d4aa" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                        <span class="logo-text">Cheap<span style="color: var(--accent)">Flyer</span></span>
                     </a>
                     <p>Your trusted partner for finding the best travel deals worldwide.</p>
                     <div class="social-links">
-                        <a href="#" aria-label="Facebook">📘</a>
-                        <a href="#" aria-label="Twitter">🐦</a>
-                        <a href="#" aria-label="Instagram">📸</a>
-                        <a href="#" aria-label="YouTube">🎥</a>
+                        <a href="#" aria-label="Facebook">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Twitter">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="Instagram">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                            </svg>
+                        </a>
+                        <a href="#" aria-label="LinkedIn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                                <rect x="2" y="9" width="4" height="12" />
+                                <circle cx="4" cy="4" r="2" />
+                            </svg>
+                        </a>
                     </div>
                 </div>
                 <div class="footer-links">
-                    <h4>Quick Links</h4>
+                    <h4>Explore</h4>
                     <ul>
-                        <li><a href="#">Flight Deals</a></li>
-                        <li><a href="#">Hotel Deals</a></li>
-                        <li><a href="#">Vacation Packages</a></li>
-                        <li><a href="#">Last Minute Deals</a></li>
+                        <li><a href="deals.html">Flight Deals</a></li>
+                        <li><a href="hotels.html">Hotels</a></li>
+                        <li><a href="packages.html">Vacation Packages</a></li>
+                        <li><a href="deals.html">Last Minute Deals</a></li>
                     </ul>
                 </div>
                 <div class="footer-links">
                     <h4>Support</h4>
                     <ul>
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">FAQs</a></li>
-                        <li><a href="#">Cancellation Policy</a></li>
+                        <li><a href="help.html">Help Center</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="faq.html">FAQs</a></li>
+                        <li><a href="cancellation.html">Cancellation Policy</a></li>
                     </ul>
                 </div>
                 <div class="footer-links">
                     <h4>Company</h4>
                     <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Press</a></li>
-                        <li><a href="#">Partners</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                        <li><a href="press.html">Press</a></li>
+                        <li><a href="partners.html">Partners</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="cookies.html">Cookie Policy</a></li>
+                        <li><a href="accessibility.html">Accessibility</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 TravelDeals. All rights reserved.</p>
+                <p>&copy; 2024 CheapFlyer. All rights reserved.</p>
                 <div class="footer-legal">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
+                    <a href="privacy.html">Privacy</a>
+                    <a href="terms.html">Terms</a>
                 </div>
             </div>
         </div>
     </footer>
 
+    <script src="js/api.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>

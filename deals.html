@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Deals - CheapFlyer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <path d="M28 12L18 4L8 12V28H28V12Z" fill="#00d4aa" opacity="0.2" />
+                    <path d="M4 16L16 6L28 16" stroke="#00d4aa" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M8 14V28H24V14" stroke="#00d4aa" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                <span class="logo-text">Cheap<span style="color: var(--accent)">Flyer</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html#flights">Flights</a></li>
+                <li><a href="index.html#vacations">Vacations</a></li>
+                <li><a href="deals.html">Deals</a></li>
+                <li><a href="help.html">Help</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-ghost">Sign In</button>
+                <a href="index.html" class="btn btn-accent btn-sm">Get Started</a>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>All Flight Deals</h1>
+            <p>Explore our complete collection of discounted flights</p>
+        </div>
+    </section>
+
+    <section class="page-content">
+        <div class="container">
+            <div class="deals-grid" id="all-deals"></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 CheapFlyer. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="privacy.html">Privacy</a>
+                    <a href="terms.html">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deals = FlightAPI.generateFlightDeals('JFK', 'New York');
+            const moreDeals = FlightAPI.generateFlightDeals('LAX', 'Los Angeles');
+            const allDeals = [...deals, ...moreDeals];
+            const container = document.getElementById('all-deals');
+            container.innerHTML = allDeals.map(deal => `
+                <div class="deal-card visible">
+                    <div class="deal-image">
+                        <img src="${deal.image}" alt="${deal.destination.city}" loading="lazy">
+                        <span class="deal-badge">-${deal.discount}%</span>
+                    </div>
+                    <div class="deal-content">
+                        <div class="deal-route">
+                            <span>${deal.origin.city}</span>
+                            <span class="route-arrow">→</span>
+                            <span>${deal.destination.city}</span>
+                        </div>
+                        <div class="deal-dates">${deal.departDate} - ${deal.returnDate}</div>
+                        <div class="deal-footer">
+                            <div class="deal-price">
+                                <span class="old-price">$${deal.originalPrice}</span>
+                                <span class="new-price">$${deal.salePrice}</span>
+                            </div>
+                            <button class="btn btn-outline btn-sm">Book</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        });
+    </script>
+</body>
+
+</html>
