@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find the best travel and flight deals. Discover amazing discounts on flights, hotels, and vacation packages.">
+    <title>TravelDeals - Find Amazing Flight & Vacation Discounts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">
+                <span class="logo-icon">✈️</span>
+                <span class="logo-text">TravelDeals</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#flights">Flights</a></li>
+                <li><a href="#vacations">Vacations</a></li>
+                <li><a href="#deals">Hot Deals</a></li>
+                <li><a href="#newsletter">Newsletter</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <h1>Discover <span class="gradient-text">Unbeatable</span> Travel Deals</h1>
+                <p>Save up to 70% on flights, hotels, and vacation packages. Your dream destination is just a click away.</p>
+                
+                <!-- Search Form -->
+                <div class="search-card">
+                    <div class="search-tabs">
+                        <button class="tab-btn active" data-tab="flights">✈️ Flights</button>
+                        <button class="tab-btn" data-tab="hotels">🏨 Hotels</button>
+                        <button class="tab-btn" data-tab="packages">📦 Packages</button>
+                    </div>
+                    <form class="search-form" id="search-form">
+                        <div class="form-group">
+                            <label for="from">From</label>
+                            <input type="text" id="from" placeholder="City or Airport" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="to">To</label>
+                            <input type="text" id="to" placeholder="City or Airport" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="depart">Depart</label>
+                            <input type="date" id="depart" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="return">Return</label>
+                            <input type="date" id="return">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Search Deals</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flight Deals Section -->
+    <section class="deals-section" id="flights">
+        <div class="container">
+            <div class="section-header">
+                <h2>🔥 Hot Flight Deals</h2>
+                <p>Limited time offers on popular destinations</p>
+            </div>
+            <div class="deals-grid">
+                <!-- Deal Card 1 -->
+                <div class="deal-card">
+                    <div class="deal-image">
+                        <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400&h=250&fit=crop" alt="Paris">
+                        <span class="discount-badge">-45%</span>
+                    </div>
+                    <div class="deal-content">
+                        <div class="deal-route">
+                            <span>New York</span>
+                            <span class="route-arrow">→</span>
+                            <span>Paris</span>
+                        </div>
+                        <div class="deal-dates">Dec 15 - Dec 22, 2024</div>
+                        <div class="deal-price">
+                            <span class="old-price">$899</span>
+                            <span class="new-price">$495</span>
+                        </div>
+                        <button class="btn btn-secondary">Book Now</button>
+                    </div>
+                </div>
+
+                <!-- Deal Card 2 -->
+                <div class="deal-card">
+                    <div class="deal-image">
+                        <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&h=250&fit=crop" alt="Tokyo">
+                        <span class="discount-badge">-35%</span>
+                    </div>
+                    <div class="deal-content">
+                        <div class="deal-route">
+                            <span>Los Angeles</span>
+                            <span class="route-arrow">→</span>
+                            <span>Tokyo</span>
+                        </div>
+                        <div class="deal-dates">Jan 10 - Jan 20, 2025</div>
+                        <div class="deal-price">
+                            <span class="old-price">$1,299</span>
+                            <span class="new-price">$845</span>
+                        </div>
+                        <button class="btn btn-secondary">Book Now</button>
+                    </div>
+                </div>
+
+                <!-- Deal Card 3 -->
+                <div class="deal-card">
+                    <div class="deal-image">
+                        <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=400&h=250&fit=crop" alt="Rome">
+                        <span class="discount-badge">-50%</span>
+                    </div>
+                    <div class="deal-content">
+                        <div class="deal-route">
+                            <span>Chicago</span>
+                            <span class="route-arrow">→</span>
+                            <span>Rome</span>
+                        </div>
+                        <div class="deal-dates">Feb 5 - Feb 12, 2025</div>
+                        <div class="deal-price">
+                            <span class="old-price">$1,100</span>
+                            <span class="new-price">$550</span>
+                        </div>
+                        <button class="btn btn-secondary">Book Now</button>
+                    </div>
+                </div>
+
+                <!-- Deal Card 4 -->
+                <div class="deal-card">
+                    <div class="deal-image">
+                        <img src="https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=400&h=250&fit=crop" alt="Bali">
+                        <span class="discount-badge">-40%</span>
+                    </div>
+                    <div class="deal-content">
+                        <div class="deal-route">
+                            <span>San Francisco</span>
+                            <span class="route-arrow">→</span>
+                            <span>Bali</span>
+                        </div>
+                        <div class="deal-dates">Mar 1 - Mar 10, 2025</div>
+                        <div class="deal-price">
+                            <span class="old-price">$1,450</span>
+                            <span class="new-price">$870</span>
+                        </div>
+                        <button class="btn btn-secondary">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vacation Packages Section -->
+    <section class="packages-section" id="vacations">
+        <div class="container">
+            <div class="section-header">
+                <h2>🌴 Vacation Packages</h2>
+                <p>All-inclusive deals for your perfect getaway</p>
+            </div>
+            <div class="packages-grid">
+                <!-- Package 1 -->
+                <div class="package-card featured">
+                    <div class="package-image">
+                        <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&h=400&fit=crop" alt="Maldives">
+                        <div class="package-overlay">
+                            <span class="package-tag">Best Seller</span>
+                        </div>
+                    </div>
+                    <div class="package-content">
+                        <h3>Maldives Paradise</h3>
+                        <p>7 nights at 5-star resort with flights</p>
+                        <ul class="package-features">
+                            <li>✓ Round-trip flights</li>
+                            <li>✓ Beachfront villa</li>
+                            <li>✓ All meals included</li>
+                            <li>✓ Spa treatment</li>
+                        </ul>
+                        <div class="package-price">
+                            <span class="from-text">From</span>
+                            <span class="price">$2,499</span>
+                            <span class="per-person">per person</span>
+                        </div>
+                        <button class="btn btn-primary">View Package</button>
+                    </div>
+                </div>
+
+                <!-- Package 2 -->
+                <div class="package-card">
+                    <div class="package-image">
+                        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=400&fit=crop" alt="Dubai">
+                    </div>
+                    <div class="package-content">
+                        <h3>Dubai Luxury Escape</h3>
+                        <p>5 nights luxury experience</p>
+                        <ul class="package-features">
+                            <li>✓ Round-trip flights</li>
+                            <li>✓ 5-star hotel</li>
+                            <li>✓ Desert safari</li>
+                        </ul>
+                        <div class="package-price">
+                            <span class="from-text">From</span>
+                            <span class="price">$1,899</span>
+                            <span class="per-person">per person</span>
+                        </div>
+                        <button class="btn btn-primary">View Package</button>
+                    </div>
+                </div>
+
+                <!-- Package 3 -->
+                <div class="package-card">
+                    <div class="package-image">
+                        <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&h=400&fit=crop" alt="Swiss Alps">
+                    </div>
+                    <div class="package-content">
+                        <h3>Swiss Alps Adventure</h3>
+                        <p>6 nights mountain experience</p>
+                        <ul class="package-features">
+                            <li>✓ Round-trip flights</li>
+                            <li>✓ Chalet accommodation</li>
+                            <li>✓ Ski pass included</li>
+                        </ul>
+                        <div class="package-price">
+                            <span class="from-text">From</span>
+                            <span class="price">$2,199</span>
+                            <span class="per-person">per person</span>
+                        </div>
+                        <button class="btn btn-primary">View Package</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="deals">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose TravelDeals?</h2>
+                <p>We make finding the best deals effortless</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Best Price Guarantee</h3>
+                    <p>We scan hundreds of travel sites to find you the lowest prices available.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Price Drop Alerts</h3>
+                    <p>Get notified instantly when prices drop on your favorite destinations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Secure Booking</h3>
+                    <p>Book with confidence with our secure payment and refund protection.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Global Destinations</h3>
+                    <p>Access deals to over 10,000 destinations worldwide.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section" id="newsletter">
+        <div class="container">
+            <div class="newsletter-card">
+                <div class="newsletter-content">
+                    <h2>Get Exclusive Deals</h2>
+                    <p>Subscribe to our newsletter and receive the hottest travel deals directly in your inbox.</p>
+                    <form class="newsletter-form" id="newsletter-form">
+                        <div class="input-group">
+                            <input type="email" placeholder="Enter your email address" required>
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </div>
+                        <p class="form-note">🔒 We respect your privacy. Unsubscribe anytime.</p>
+                    </form>
+                </div>
+                <div class="newsletter-graphic">
+                    <div class="plane-animation">✈️</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">✈️</span>
+                        <span class="logo-text">TravelDeals</span>
+                    </a>
+                    <p>Your trusted partner for finding the best travel deals worldwide.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook">📘</a>
+                        <a href="#" aria-label="Twitter">🐦</a>
+                        <a href="#" aria-label="Instagram">📸</a>
+                        <a href="#" aria-label="YouTube">🎥</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#">Flight Deals</a></li>
+                        <li><a href="#">Hotel Deals</a></li>
+                        <li><a href="#">Vacation Packages</a></li>
+                        <li><a href="#">Last Minute Deals</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 TravelDeals. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
