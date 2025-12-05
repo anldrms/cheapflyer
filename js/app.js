@@ -1,141 +1,178 @@
-// ===== USER LOCATION STATE =====
-let userLocation = {
-    lat: null,
-    lng: null,
+/**
+ * CheapFlyer Main Application
+ * Handles UI interactions, geolocation, and dynamic content
+ */
+
+// ===== USER STATE =====
+let userState = {
+    location: null,
     airport: null,
-    granted: false
+    locationGranted: false,
+    deals: [],
+    packages: []
 };
 
-// ===== DOM ELEMENTS =====
-const locationModal = document.getElementById('location-modal');
-const locationBanner = document.getElementById('location-banner');
-const navToggle = document.querySelector('.nav-toggle');
-const navLinks = document.querySelector('.nav-links');
-const tabBtns = document.querySelectorAll('.tab-btn');
-const searchForm = document.getElementById('search-form');
-const newsletterForm = document.getElementById('newsletter-form');
+// ===== DOM READY =====
+document.addEventListener('DOMContentLoaded', initApp);
 
-// ===== INITIALIZE APP =====
-document.addEventListener('DOMContentLoaded', () => {
-    initializeApp();
-});
+async function initApp() {
+    console.log('%c✈️ CheapFlyer', 'font-size: 20px; font-weight: bold; color: #00d4aa;');
 
-async function initializeApp() {
-    // Check if location was previously granted
-    const savedLocation = localStorage.getItem('userLocation');
+    setupEventListeners();
+    setMinDates();
 
-    if (savedLocation) {
-        userLocation = JSON.parse(savedLocation);
-        updateUIWithLocation();
-        loadDeals();
-    } else {
-        // Show location permission modal after a short delay
-        setTimeout(() => {
+    // Check for saved location
+    const saved = localStorage.getItem('cheapflyer_location');
+    if (saved) {
+        try {
+            userState = { ...userState, ...JSON.parse(saved) };
+            updateLocationUI();
+            await loadDeals();
+        } catch (e) {
             showLocationModal();
-        }, 1000);
-        // Load default deals in the meantime
+        }
+    } else {
+        // Show location modal after brief delay
+        setTimeout(showLocationModal, 800);
         loadDefaultDeals();
     }
-
-    // Setup event listeners
-    setupEventListeners();
-
-    // Initialize animations
-    initScrollAnimations();
-
-    // Set min dates
-    setMinDates();
 }
 
 // ===== LOCATION MODAL =====
 function showLocationModal() {
-    if (locationModal) {
-        locationModal.classList.add('active');
-    }
+    const modal = document.getElementById('location-modal');
+    if (modal) modal.classList.add('active');
 }
 
 function hideLocationModal() {
-    if (locationModal) {
-        locationModal.classList.remove('active');
-    }
+    const modal = document.getElementById('location-modal');
+    if (modal) modal.classList.remove('active');
 }
 
-// ===== GEOLOCATION =====
 async function requestLocation() {
     hideLocationModal();
 
     if (!navigator.geolocation) {
-        showNotification('Geolocation is not supported by your browser', 'error');
+        showNotification('Geolocation not supported', 'error');
         loadDefaultDeals();
         return;
     }
 
-    showNotification('Getting your location...', 'info');
+    showNotification('Finding your location...', 'info');
 
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            userLocation.lat = position.coords.latitude;
-            userLocation.lng = position.coords.longitude;
-            userLocation.airport = FlightAPI.findNearestAirport(userLocation.lat, userLocation.lng);
-            userLocation.granted = true;
+    try {
+        const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000
+            });
+        });
 
-            // Save to localStorage
-            localStorage.setItem('userLocation', JSON.stringify(userLocation));
+        userState.location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
 
-            updateUIWithLocation();
-            loadDeals();
-            showNotification(`Found deals from ${userLocation.airport.city} (${userLocation.airport.code})`, 'success');
-        },
-        (error) => {
-            console.error('Geolocation error:', error);
-            showNotification('Could not get your location. Showing default deals.', 'error');
-            loadDefaultDeals();
-        },
-        {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 300000 // 5 minutes
-        }
-    );
+        userState.airport = FlightAPI.findNearestAirport(
+            userState.location.lat,
+            userState.location.lng
+        );
+
+        userState.locationGranted = true;
+
+        // Save to localStorage
+        saveUserState();
+
+        updateLocationUI();
+        await loadDeals();
+
+        showNotification(
+            `Showing deals from ${userState.airport.city} (${userState.airport.code})`,
+            'success'
+        );
+
+    } catch (error) {
+        console.error('Geolocation error:', error);
+        showNotification('Could not get location. Using default.', 'error');
+        loadDefaultDeals();
+    }
 }
 
-function updateUIWithLocation() {
-    if (!userLocation.airport) return;
+function saveUserState() {
+    localStorage.setItem('cheapflyer_location', JSON.stringify({
+        location: userState.location,
+        airport: userState.airport,
+        locationGranted: userState.locationGranted
+    }));
+}
 
-    // Update location banner
-    if (locationBanner) {
-        locationBanner.classList.add('active');
-        document.getElementById('user-airport').textContent = userLocation.airport.code;
-        document.getElementById('user-city').textContent = `- ${userLocation.airport.city}`;
+function updateLocationUI() {
+    if (!userState.airport) return;
+
+    // Show location banner
+    const banner = document.getElementById('location-banner');
+    if (banner) {
+        banner.classList.add('active');
+        const airportCode = document.getElementById('user-airport');
+        const cityName = document.getElementById('user-city');
+        if (airportCode) airportCode.textContent = userState.airport.code;
+        if (cityName) cityName.textContent = `- ${userState.airport.city}`;
     }
 
     // Update deals origin text
     const dealsOrigin = document.getElementById('deals-origin');
-    if (dealsOrigin) {
-        dealsOrigin.textContent = userLocation.airport.city;
-    }
+    if (dealsOrigin) dealsOrigin.textContent = userState.airport.city;
 
     // Pre-fill search form
     const fromInput = document.getElementById('from');
-    if (fromInput) {
-        fromInput.value = `${userLocation.airport.city} (${userLocation.airport.code})`;
+    if (fromInput && !fromInput.value) {
+        fromInput.value = `${userState.airport.city} (${userState.airport.code})`;
     }
 }
 
 // ===== LOAD DEALS =====
-function loadDeals() {
-    const airport = userLocation.airport || { code: 'JFK', city: 'New York' };
-    const deals = FlightAPI.generateFlightDeals(airport.code, airport.city);
-    renderFlightDeals(deals);
+async function loadDeals() {
+    const airport = userState.airport || { code: 'JFK', city: 'New York' };
 
-    const packages = FlightAPI.generateVacationPackages();
-    renderVacationPackages(packages);
+    // Show loading state
+    showLoadingState('flight-deals');
+    showLoadingState('vacation-packages');
+
+    try {
+        // Fetch flight deals
+        userState.deals = await FlightAPI.fetchFlightDeals(airport.code, airport.city, 6);
+        renderFlightDeals(userState.deals);
+
+        // Get vacation packages
+        userState.packages = FlightAPI.generateVacationPackages();
+        renderPackages(userState.packages);
+
+    } catch (error) {
+        console.error('Error loading deals:', error);
+        showNotification('Failed to load deals', 'error');
+    }
 }
 
 function loadDefaultDeals() {
-    // Default to JFK/New York
-    userLocation.airport = { code: 'JFK', city: 'New York' };
+    userState.airport = { code: 'JFK', city: 'New York', country: 'US' };
     loadDeals();
+}
+
+function showLoadingState(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.innerHTML = Array(3).fill(0).map(() => `
+        <div class="deal-card loading">
+            <div class="loading-skeleton" style="height: 180px;"></div>
+            <div style="padding: 1.25rem;">
+                <div class="loading-skeleton" style="height: 20px; width: 70%; margin-bottom: 8px;"></div>
+                <div class="loading-skeleton" style="height: 16px; width: 50%; margin-bottom: 16px;"></div>
+                <div class="loading-skeleton" style="height: 24px; width: 40%;"></div>
+            </div>
+        </div>
+    `).join('');
 }
 
 // ===== RENDER FLIGHT DEALS =====
@@ -143,11 +180,16 @@ function renderFlightDeals(deals) {
     const container = document.getElementById('flight-deals');
     if (!container) return;
 
-    container.innerHTML = deals.map(deal => `
-        <div class="deal-card" data-deal-id="${deal.id}">
+    if (!deals || deals.length === 0) {
+        container.innerHTML = '<p style="color: var(--gray); text-align: center; grid-column: 1/-1;">No deals found. Try a different location.</p>';
+        return;
+    }
+
+    container.innerHTML = deals.map((deal, i) => `
+        <div class="deal-card" data-id="${deal.id}" style="animation-delay: ${i * 0.1}s;">
             <div class="deal-image">
-                <img src="${deal.image}" alt="${deal.destination.city}" loading="lazy">
-                <span class="deal-badge">-${deal.discount}%</span>
+                <img src="${deal.image}" alt="${deal.destination.city}" loading="lazy" onerror="this.src='${FlightAPI.DESTINATION_IMAGES.default}'">
+                <span class="deal-badge">${deal.isHot ? 'HOT ' : ''}-${deal.discount}%</span>
                 <button class="deal-save" aria-label="Save deal">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
@@ -156,67 +198,80 @@ function renderFlightDeals(deals) {
             </div>
             <div class="deal-content">
                 <div class="deal-route">
-                    <span>${deal.origin.city}</span>
-                    <span class="route-arrow">→</span>
-                    <span>${deal.destination.city}</span>
+                    <span>${deal.origin.code}</span>
+                    <span class="route-arrow">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                    <span>${deal.destination.code}</span>
                 </div>
+                <div class="deal-city">${deal.destination.city}</div>
                 <div class="deal-dates">${deal.departDate} - ${deal.returnDate}</div>
+                ${deal.seatsLeft && deal.seatsLeft < 5 ? `<div class="seats-warning">Only ${deal.seatsLeft} seats left!</div>` : ''}
                 <div class="deal-footer">
                     <div class="deal-price">
                         <span class="old-price">$${deal.originalPrice}</span>
                         <span class="new-price">$${deal.salePrice}</span>
                     </div>
-                    <button class="btn btn-outline btn-sm book-btn">Book</button>
+                    <button class="btn btn-accent btn-sm book-btn">Book Now</button>
                 </div>
             </div>
         </div>
     `).join('');
 
-    // Add animation class
-    container.querySelectorAll('.deal-card').forEach((card, i) => {
-        setTimeout(() => card.classList.add('visible'), i * 100);
-    });
+    // Add visible class for animation
+    setTimeout(() => {
+        container.querySelectorAll('.deal-card').forEach(card => card.classList.add('visible'));
+    }, 100);
 
-    // Add click handlers
-    container.querySelectorAll('.deal-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            if (!e.target.closest('.deal-save') && !e.target.closest('.book-btn')) {
-                showNotification('Opening deal details...', 'info');
-            }
-        });
-    });
+    // Add event listeners
+    addDealCardListeners(container);
+}
 
-    container.querySelectorAll('.book-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            showNotification('Redirecting to booking...', 'success');
-        });
-    });
-
+function addDealCardListeners(container) {
+    // Save button
     container.querySelectorAll('.deal-save').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const icon = btn.querySelector('svg');
-            if (btn.classList.contains('saved')) {
-                btn.classList.remove('saved');
-                icon.style.fill = 'none';
-                showNotification('Removed from saved deals', 'info');
-            } else {
-                btn.classList.add('saved');
-                icon.style.fill = 'currentColor';
+            const svg = btn.querySelector('svg');
+            if (btn.classList.toggle('saved')) {
+                svg.setAttribute('fill', 'currentColor');
                 showNotification('Deal saved!', 'success');
+            } else {
+                svg.setAttribute('fill', 'none');
+                showNotification('Removed from saved', 'info');
             }
+        });
+    });
+
+    // Book button
+    container.querySelectorAll('.book-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const card = btn.closest('.deal-card');
+            const dealId = card.dataset.id;
+            showNotification('Redirecting to booking...', 'success');
+            // In production, redirect to booking page
+        });
+    });
+
+    // Card click
+    container.querySelectorAll('.deal-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('.deal-save') || e.target.closest('.book-btn')) return;
+            showNotification('Opening deal details...', 'info');
         });
     });
 }
 
-// ===== RENDER VACATION PACKAGES =====
-function renderVacationPackages(packages) {
+// ===== RENDER PACKAGES =====
+function renderPackages(packages) {
     const container = document.getElementById('vacation-packages');
     if (!container) return;
 
-    container.innerHTML = packages.map(pkg => `
-        <div class="package-card ${pkg.featured ? 'featured' : ''}" data-package-id="${pkg.id}">
+    container.innerHTML = packages.map((pkg, i) => `
+        <div class="package-card ${pkg.featured ? 'featured' : ''}" data-id="${pkg.id}" style="animation-delay: ${i * 0.1}s;">
             <div class="package-image">
                 <img src="${pkg.image}" alt="${pkg.title}" loading="lazy">
                 ${pkg.tag ? `<span class="package-tag">${pkg.tag}</span>` : ''}
@@ -225,28 +280,32 @@ function renderVacationPackages(packages) {
                 <h3>${pkg.title}</h3>
                 <p>${pkg.subtitle}</p>
                 <ul class="package-features">
-                    ${pkg.features.map(f => `<li>${f}</li>`).join('')}
+                    ${pkg.features.slice(0, 4).map(f => `<li>${f}</li>`).join('')}
                 </ul>
                 <div class="package-footer">
                     <div class="package-price">
                         <span class="from-text">From</span>
-                        <span class="price">$${pkg.price.toLocaleString()}</span>
+                        <div>
+                            <span class="old-price" style="font-size: 0.85rem;">$${pkg.originalPrice.toLocaleString()}</span>
+                            <span class="price">$${pkg.price.toLocaleString()}</span>
+                        </div>
                         <span class="per-person">per person</span>
                     </div>
-                    <button class="btn btn-accent btn-sm">View</button>
+                    <button class="btn btn-accent btn-sm">View Package</button>
                 </div>
             </div>
         </div>
     `).join('');
 
-    // Add animation class
-    container.querySelectorAll('.package-card').forEach((card, i) => {
-        setTimeout(() => card.classList.add('visible'), i * 100);
-    });
+    // Add visible class for animation
+    setTimeout(() => {
+        container.querySelectorAll('.package-card').forEach(card => card.classList.add('visible'));
+    }, 100);
 
-    // Add click handlers
+    // Add event listeners
     container.querySelectorAll('.package-card .btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
             showNotification('Opening package details...', 'info');
         });
     });
@@ -254,7 +313,7 @@ function renderVacationPackages(packages) {
 
 // ===== EVENT LISTENERS =====
 function setupEventListeners() {
-    // Location modal buttons
+    // Location modal
     document.getElementById('location-allow')?.addEventListener('click', requestLocation);
     document.getElementById('location-deny')?.addEventListener('click', () => {
         hideLocationModal();
@@ -265,62 +324,60 @@ function setupEventListeners() {
         loadDefaultDeals();
     });
 
-    // Change location button
+    // Change location
     document.getElementById('change-location')?.addEventListener('click', () => {
-        localStorage.removeItem('userLocation');
+        localStorage.removeItem('cheapflyer_location');
+        userState = { location: null, airport: null, locationGranted: false, deals: [], packages: [] };
         requestLocation();
     });
 
-    // Mobile navigation
-    navToggle?.addEventListener('click', () => {
-        navLinks?.classList.toggle('active');
-    });
+    // Mobile nav toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    navToggle?.addEventListener('click', () => navLinks?.classList.toggle('active'));
 
+    // Close mobile nav on link click
     navLinks?.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-        });
+        link.addEventListener('click', () => navLinks.classList.remove('active'));
     });
 
     // Search tabs
-    tabBtns?.forEach(btn => {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            tabBtns.forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         });
     });
 
     // Search form
-    searchForm?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const from = document.getElementById('from').value;
-        const to = document.getElementById('to').value;
-        showNotification(`Searching flights from ${from} to ${to}...`, 'info');
-        setTimeout(() => {
-            showNotification('Great deals found! Check below.', 'success');
-        }, 1500);
-    });
+    document.getElementById('search-form')?.addEventListener('submit', handleSearch);
 
     // Newsletter form
-    newsletterForm?.addEventListener('submit', (e) => {
+    document.getElementById('newsletter-form')?.addEventListener('submit', (e) => {
         e.preventDefault();
-        showNotification('Successfully subscribed! Check your inbox.', 'success');
-        newsletterForm.reset();
-    });
-
-    // Navbar scroll effect
-    window.addEventListener('scroll', () => {
-        const navbar = document.querySelector('.navbar');
-        if (window.scrollY > 50) {
-            navbar?.classList.add('scrolled');
-        } else {
-            navbar?.classList.remove('scrolled');
-        }
+        const email = e.target.querySelector('input[type="email"]').value;
+        showNotification('Successfully subscribed!', 'success');
+        e.target.reset();
     });
 
     // Sign in button
     document.getElementById('signin-btn')?.addEventListener('click', () => {
-        showNotification('Sign in feature coming soon!', 'info');
+        showNotification('Sign in coming soon!', 'info');
+    });
+
+    // Navbar scroll effect
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        const navbar = document.querySelector('.navbar');
+        const currentScroll = window.pageYOffset;
+
+        if (currentScroll > 50) {
+            navbar?.classList.add('scrolled');
+        } else {
+            navbar?.classList.remove('scrolled');
+        }
+
+        lastScroll = currentScroll;
     });
 
     // Smooth scroll for anchor links
@@ -337,76 +394,118 @@ function setupEventListeners() {
     });
 }
 
+// ===== SEARCH HANDLER =====
+async function handleSearch(e) {
+    e.preventDefault();
+
+    const from = document.getElementById('from').value;
+    const to = document.getElementById('to').value;
+    const depart = document.getElementById('depart').value;
+    const returnDate = document.getElementById('return').value;
+
+    if (!from || !to || !depart) {
+        showNotification('Please fill all required fields', 'error');
+        return;
+    }
+
+    showNotification('Searching for the best deals...', 'info');
+
+    try {
+        const results = await FlightAPI.searchFlights(from, to, depart, returnDate);
+
+        if (results.success && results.results.length > 0) {
+            const best = results.results[0];
+            showNotification(
+                `Found deals from $${best.sale}! Scroll down to see more.`,
+                'success'
+            );
+        } else {
+            showNotification('No flights found for this route', 'error');
+        }
+    } catch (error) {
+        showNotification('Search failed. Please try again.', 'error');
+    }
+}
+
+// ===== SET MIN DATES =====
+function setMinDates() {
+    const today = new Date().toISOString().split('T')[0];
+    const departInput = document.getElementById('depart');
+    const returnInput = document.getElementById('return');
+
+    if (departInput) {
+        departInput.setAttribute('min', today);
+        departInput.addEventListener('change', () => {
+            if (returnInput) {
+                returnInput.setAttribute('min', departInput.value);
+            }
+        });
+    }
+
+    if (returnInput) {
+        returnInput.setAttribute('min', today);
+    }
+}
+
 // ===== NOTIFICATION SYSTEM =====
 function showNotification(message, type = 'info') {
-    // Remove existing notification
-    document.querySelector('.notification')?.remove();
+    // Remove existing
+    document.querySelectorAll('.notification').forEach(n => n.remove());
 
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
+
+    const icons = {
+        success: '✓',
+        error: '✕',
+        info: 'ℹ'
+    };
+
     notification.innerHTML = `
-        <span>${message}</span>
-        <button class="notification-close">&times;</button>
+        <span class="notification-icon">${icons[type] || icons.info}</span>
+        <span class="notification-message">${message}</span>
+        <button class="notification-close">×</button>
     `;
 
     document.body.appendChild(notification);
 
     // Close button
     notification.querySelector('.notification-close').addEventListener('click', () => {
-        notification.style.animation = 'slideDown 0.3s ease forwards';
+        notification.classList.add('hiding');
         setTimeout(() => notification.remove(), 300);
     });
 
-    // Auto-remove
+    // Auto remove
     setTimeout(() => {
         if (notification.parentElement) {
-            notification.style.animation = 'slideDown 0.3s ease forwards';
+            notification.classList.add('hiding');
             setTimeout(() => notification.remove(), 300);
         }
     }, 4000);
 }
 
-// ===== SCROLL ANIMATIONS =====
-function initScrollAnimations() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.deal-card, .package-card, .feature-card').forEach(el => {
-        observer.observe(el);
-    });
-}
-
-// ===== SET MIN DATES =====
-function setMinDates() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('depart')?.setAttribute('min', today);
-    document.getElementById('return')?.setAttribute('min', today);
-
-    document.getElementById('depart')?.addEventListener('change', (e) => {
-        document.getElementById('return')?.setAttribute('min', e.target.value);
-    });
-}
-
-// ===== CSS for slideDown animation =====
+// ===== INJECT ADDITIONAL STYLES =====
 const style = document.createElement('style');
 style.textContent = `
-    @keyframes slideDown {
-        from { transform: translateY(0); opacity: 1; }
-        to { transform: translateY(100%); opacity: 0; }
-    }
+    .navbar.scrolled { background: rgba(0, 0, 0, 0.98); }
     .modal-body { text-align: center; margin-bottom: 1.5rem; }
     .modal-body .modal-icon { margin-bottom: 1rem; color: var(--accent); }
-    .modal-body p { color: var(--gray-light); }
+    .modal-body p { color: var(--gray-light); line-height: 1.6; }
     .modal-actions { display: flex; gap: 1rem; justify-content: flex-end; }
-    .navbar.scrolled { background: rgba(0, 0, 0, 0.98); }
+    
+    .deal-city { font-size: 0.9rem; color: var(--gray-light); margin-bottom: 0.25rem; }
+    .seats-warning { font-size: 0.75rem; color: var(--warning); margin-bottom: 0.75rem; font-weight: 500; }
+    .deal-save.saved { background: var(--accent); color: var(--dark); }
+    
+    .notification { gap: 0.75rem; }
+    .notification-icon { font-size: 1rem; }
+    .notification-message { flex: 1; }
+    .notification.hiding { animation: slideDown 0.3s ease forwards; }
+    @keyframes slideDown { to { transform: translateY(100%); opacity: 0; } }
+    
+    .loading-skeleton { background: linear-gradient(90deg, var(--dark-card) 25%, var(--dark-hover) 50%, var(--dark-card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    
+    .route-arrow { display: flex; align-items: center; color: var(--gray); }
 `;
 document.head.appendChild(style);
-
-// ===== CONSOLE BRANDING =====
-console.log('%cCheapFlyer', 'font-size: 24px; font-weight: bold; color: #00d4aa;');
-console.log('%cFind the best travel deals.', 'font-size: 14px; color: #666;');
